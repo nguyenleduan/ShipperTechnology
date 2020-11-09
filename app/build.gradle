@@ -67,5 +67,12 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     // load image url
     implementation 'com.squareup.picasso:picasso:(insert latest version)'
+    //Json Volly
+    implementation 'com.android.volley:volley:1.1.1'
+    //Gson api
+    implementation 'com.google.code.gson:gson:2.8.6'
+    // htppOK 
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.moshi:moshi:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

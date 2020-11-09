@@ -70,6 +70,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.testapi_fpt.DataClass;
 import com.google.testapi_fpt.MainActivity;
+import com.google.testapi_fpt.MovableFloatingActionButton;
 import com.google.testapi_fpt.R;
 import com.google.testapi_fpt.WelcomeActivity;
 import com.google.testapi_fpt.adapter.SearchListViewAdapter;
@@ -98,6 +99,7 @@ public class LocationActivity extends FragmentActivity implements
     FirebaseDatabase mDataFirebase;
     DatabaseReference mData;
     Animation aniUp, aniDow;
+    MovableFloatingActionButton movableFloatingActionButton ;
     Spinner spinner;
     ListView lvSearchLocation;
     static LatLng mLatngLongClick;
@@ -468,6 +470,12 @@ public class LocationActivity extends FragmentActivity implements
     }
 
     private void EvenView() {
+        movableFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(LocationActivity.this, "!", Toast.LENGTH_SHORT).show();
+            }
+        });
         edtSeachGoogleMaps.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -484,6 +492,7 @@ public class LocationActivity extends FragmentActivity implements
 
     private void inFindview() {
 
+        movableFloatingActionButton = findViewById(R.id.fab);
         edt = findViewById(R.id.edt);
         spinner = findViewById(R.id.spinner);
         aniUp = AnimationUtils.loadAnimation(this, R.anim.scale_up);
@@ -692,7 +701,6 @@ public class LocationActivity extends FragmentActivity implements
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "123213", Toast.LENGTH_SHORT).show();
         return false;
     }
 

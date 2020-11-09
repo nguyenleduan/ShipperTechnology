@@ -74,7 +74,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="0dp"
-                    android:src="@drawable/gif_maps"
+                    android:src="@drawable/gif_1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -119,7 +119,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@drawable/gif_note"
+                    android:src="@drawable/gif_maps"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -175,7 +175,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@drawable/gif_test_nhan"
+                    android:src="@drawable/gif_note"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -191,7 +191,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/baloo"
-                    android:text="Chờ updet"
+                    android:text="Lịch sử"
                     android:textAlignment="center"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -220,10 +220,11 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@drawable/gif_test_1a"
+                    android:src="@drawable/gif_erro"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -235,7 +236,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/baloo"
-                    android:text="Chờ updet"
+                    android:text="Báo lỗi"
                     android:textAlignment="center"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -273,10 +274,27 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@drawable/gif_plane"
+                    android:src="@drawable/gif_note2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="76dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:text="Chờ Updet"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
@@ -301,10 +319,27 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@drawable/gif_test_1b"
+                    android:src="@drawable/git_cat"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="76dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:text="Chờ Updet"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

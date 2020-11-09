@@ -2,13 +2,8 @@ package com.google.testapi_fpt;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DatabaseReference;
@@ -16,7 +11,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.testapi_fpt.fragment.GroupFragment;
 import com.google.testapi_fpt.fragment.HomeFragment;
 import com.google.testapi_fpt.fragment.ProfileFragment;
-import com.google.testapi_fpt.location.LocationActivity;
 import com.google.testapi_fpt.model.ProgramModel;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
@@ -25,15 +19,10 @@ import com.luseen.spacenavigation.SpaceOnClickListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bt_navigation;
