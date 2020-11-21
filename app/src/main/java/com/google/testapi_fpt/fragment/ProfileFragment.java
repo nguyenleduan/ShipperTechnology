@@ -11,10 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.snapshot.IndexedNode;
 import com.google.testapi_fpt.DataClass;
 import com.google.testapi_fpt.ImageCover;
 import com.google.testapi_fpt.R;
 import com.google.testapi_fpt.login.LoginActivity;
+import com.google.testapi_fpt.teeee;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -30,8 +32,9 @@ public class ProfileFragment extends Fragment {
     ImageView imgLogout;
     LoginActivity acLogIn = new LoginActivity();
     DataClass dataClass = new DataClass();
-    TextView tvSLLocation,tvName;
-    CircleImageView circleImageView ;
+    TextView tvSLLocation, tvName;
+    CircleImageView circleImageView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,16 +46,24 @@ public class ProfileFragment extends Fragment {
     }
 
     private void SetContent() {
+
+        tvSLLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), teeee.class);
+                startActivity(intent);
+            }
+        });
         imgLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 acLogIn.Logout();
-                 Intent intent = new Intent(getContext(),LoginActivity.class);
-                 startActivity(intent);
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
             }
         });
         tvName.setText(dataClass.mProfile.UserName);
-        tvSLLocation.setText("Số địa điểm: "+dataClass.arrProgram.size() );
+        tvSLLocation.setText("Số địa điểm: " + dataClass.arrProgram.size());
         Picasso.get().load(dataClass.mProfile.LinkAvatar).into(circleImageView);
     }
 

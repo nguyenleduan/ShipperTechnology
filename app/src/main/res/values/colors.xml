@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="white">#FFFF</color>
+    <color name="goog">#FFD704</color>
+    <color name="black">#FF000000</color>
+<!--    note-->
+
+    <color name="bg_gradient_start">#31244e</color>
+    <color name="bg_gradient_end">#6b394c</color>
 </resources>

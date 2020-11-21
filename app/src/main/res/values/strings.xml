@@ -32,7 +32,13 @@
     <string name="login_failed">"Login failed"</string>
 
 
-        <!--    String VietNam-->
+    <!--    String VietNam-->
     <string name="CallNow_VN">"Gọi ngay"</string>
     <string name="Close_VN">"Đóng"</string>
+
+
+    <!--    note -->
+    <string name="speech_prompt">Say something…</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="tap_on_mic">Tap on mic to speak</string>
 </resources>

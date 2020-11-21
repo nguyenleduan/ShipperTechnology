@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -58,6 +59,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN = 2000;
     Animation top;
     ImageView img;
+    TextView tv;
     DatabaseReference mData;
 //    public static ProfileModel mProfile =null;
 //    public static ArrayList<ProgramModel> arr = new ArrayList<>();
@@ -68,7 +70,9 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         top = AnimationUtils.loadAnimation(this,R.anim.top_animation);
         img = findViewById(R.id.imgLogo);
-        img.setAnimation(top);
+        tv = findViewById(R.id.tv);
+//        img.setAnimation(top);
+        tv.setAnimation(top);
 //        arr.clear();
         DataMaps dataMaps = new DataMaps();
         dataMaps.start();
@@ -80,26 +84,27 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         },SPLASH_SCREEN);
         String url = "http://my-json-feed";
+// test
 
-        JsonObjectRequest re = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    JSONObject jsonObject = response.getJSONObject("main");
-                    JSONArray jsonArray = response.getJSONArray("DDASD");
-                    JSONObject object = jsonArray.getJSONObject(0);
-                    String a = object.getString("asd");
-                    
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
+//        JsonObjectRequest re = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                try{
+//                    JSONObject jsonObject = response.getJSONObject("main");
+//                    JSONArray jsonArray = response.getJSONArray("DDASD");
+//                    JSONObject object = jsonArray.getJSONObject(0);
+//                    String a = object.getString("asd");
+//
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
 
 
 //        new AsyncTask<Void, Void, ArrayList<UserModelss>>() {
@@ -154,9 +159,6 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
     private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -167,7 +169,8 @@ public class WelcomeActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        );
     }
 
 }

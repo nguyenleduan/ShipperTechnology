@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -31,6 +33,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -45,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +63,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -85,6 +90,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -99,7 +105,7 @@ public class LocationActivity extends FragmentActivity implements
     FirebaseDatabase mDataFirebase;
     DatabaseReference mData;
     Animation aniUp, aniDow;
-    MovableFloatingActionButton movableFloatingActionButton ;
+    MovableFloatingActionButton movableFloatingActionButton, fabmicro;
     Spinner spinner;
     ListView lvSearchLocation;
     static LatLng mLatngLongClick;
@@ -111,15 +117,17 @@ public class LocationActivity extends FragmentActivity implements
     static SearchListViewAdapter searchView;
     ImageView imgSearchLocation;
     EditText edt, edtSeachGoogleMaps;
+
     static ArrayList<ProgramModel> arrSearchProgram = new ArrayList<>();
     private static final int REQUEST_CALL = 1;
+    private final int REQ_CODE_SPEECH_INPUT = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         inFindview();
-        Log.e("Logs", activity.mProfile.IDUSER);
+        Log.e("Logs", activity.mVisibleSwitchMarker.toString());
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.maps);
         mapFragment.getMapAsync(this);
         mDataFirebase = FirebaseDatabase.getInstance();
@@ -176,7 +184,14 @@ public class LocationActivity extends FragmentActivity implements
         lvSearchLocation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MoveCameraSearch(new LatLng(arrlist.get(position).Latitude, arrlist.get(position).Longitude), 15);
+                if (!activity.mVisibleSwitchMarker) {
+                    mMap.clear();
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(arrlist.get(position).Latitude, arrlist.get(position).Longitude))
+                            .title(arrlist.get(position).NumberPhone).
+                                    icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).snippet(arrlist.get(position).Address));
+                    marker.showInfoWindow();
+                }
+                MoveCameraSearch(new LatLng(arrlist.get(position).Latitude, arrlist.get(position).Longitude), 16);
                 // close key board
                 CloseKeyboard();
                 edt.setText(null);
@@ -470,17 +485,42 @@ public class LocationActivity extends FragmentActivity implements
     }
 
     private void EvenView() {
+
         movableFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(LocationActivity.this, "!", Toast.LENGTH_SHORT).show();
+                Dialog dialog = new Dialog(LocationActivity.this);
+                dialog.setContentView(R.layout.dialog_menu_location);
+                final Switch aSwitch = dialog.findViewById(R.id.switchMarer);
+                if (!activity.mVisibleSwitchMarker) {
+                    aSwitch.setChecked(false);
+                }
+                aSwitch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (activity.mVisibleSwitchMarker) {
+                            activity.mVisibleSwitchMarker = false;
+                            mMap.clear();
+                        } else {
+                            activity.mVisibleSwitchMarker = true;
+                            LoadMarker();
+                        }
+                    }
+                });
+                dialog.show();
+            }
+        });
+        fabmicro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Micro voice
+                voice();
             }
         });
         edtSeachGoogleMaps.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-
                     CloseKeyboard();
                     SearchLocation(edtSeachGoogleMaps.getText().toString());
                     return true;
@@ -490,9 +530,85 @@ public class LocationActivity extends FragmentActivity implements
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    // xữ lý giọng nói
+                    UIVoice(result.get(0));
+                }
+                break;
+            }
+        }
+    }
+
+    private void UIVoice(String s) {
+        String str = s;
+        String sMunber = "";
+        str = str.replaceAll("[^0-9]", ",");
+        String[] item = str.split(",");
+        for (int i = 0; i < item.length; i++) {
+            try {
+                sMunber = sMunber + item[i];
+            } catch (NumberFormatException e) {
+            }
+            Log.e("saaa", sMunber);
+        }
+        arrSearchProgram.clear();
+        for (int i = 0; i < activity.arrProgram.size(); i++) {
+            if (String.valueOf(activity.arrProgram.get(i).NumberPhone).toLowerCase().contains(sMunber.toLowerCase())) {
+                arrSearchProgram.add(activity.arrProgram.get(i));
+            }
+        }
+        if (arrSearchProgram.size() != 0) {
+            //@
+            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(arrSearchProgram.get(0).Latitude, arrSearchProgram.get(0).Longitude)).title(arrSearchProgram.get(0).NumberPhone).
+                    icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).snippet(arrSearchProgram.get(0).Address));
+            MoveCameraSearch(new LatLng(arrSearchProgram.get(0).Latitude, arrSearchProgram.get(0).Longitude), 18);
+            marker.showInfoWindow();
+        } else {
+            Toast.makeText(this, "Không tìm thấy " + sMunber, Toast.LENGTH_SHORT).show();
+        }
+        if(s.startsWith("đến")){
+            final LatLng targetLatLng = new LatLng(
+                    arrSearchProgram.get(0).Latitude,
+                    arrSearchProgram.get(0).Longitude);
+            final Intent intent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("google.navigation:q="
+                            + targetLatLng.latitude
+                            + ","
+                            + targetLatLng.longitude));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            LocationActivity.this.startActivity(intent);
+        }
+
+    }
+
+    private void voice() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void inFindview() {
 
         movableFloatingActionButton = findViewById(R.id.fab);
+        fabmicro = findViewById(R.id.fabmicro);
         edt = findViewById(R.id.edt);
         spinner = findViewById(R.id.spinner);
         aniUp = AnimationUtils.loadAnimation(this, R.anim.scale_up);
@@ -577,6 +693,24 @@ public class LocationActivity extends FragmentActivity implements
         EvenView();
     }
 
+    // test tool bar maps
+    private View findGoogleMapDirectionsButton(View v) {
+        View directionsButton = null;
+        if (v instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) v;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                directionsButton = findGoogleMapDirectionsButton(vg.getChildAt(i));
+                if (directionsButton != null) {
+                    break;
+                }
+            }
+        } else if (v.getTag() != null
+                && "GoogleMapDirectionsButton".equalsIgnoreCase(v.getTag().toString())) {
+            directionsButton = v;
+        }
+        return directionsButton;
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -591,10 +725,9 @@ public class LocationActivity extends FragmentActivity implements
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+
         mMap.setMyLocationEnabled(true);
-//        LatLng latLng =new LatLng(10.147283, 106.101777);
-//        mMap.addMarker(new MarkerOptions().position(latLng).title("TEST"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
@@ -622,7 +755,9 @@ public class LocationActivity extends FragmentActivity implements
                 CallPhone(marker);
             }
         });
-        LoadMarker();
+        if (activity.mVisibleSwitchMarker) {
+            LoadMarker();
+        }
     }
 
     // logclicklistener marker
@@ -675,7 +810,6 @@ public class LocationActivity extends FragmentActivity implements
         arrSearchProgram.clear();
         mMap.clear();
         mMarkerLongclicklistener = null;
-        Log.e("LOGE", activity.arrProgram.size() + "");
         markerList.clear();
         for (int i = 0; i < activity.arrProgram.size(); i++) {
             LatLng latLng = new LatLng(activity.arrProgram.get(i).Latitude, activity.arrProgram.get(i).Longitude);
@@ -683,12 +817,10 @@ public class LocationActivity extends FragmentActivity implements
                     icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).snippet(activity.arrProgram.get(i).Address));
             markerList.add(mMarkerLongclicklistener);
         }
-
         mMap.setOnMarkerDragListener(new LinkMarkerLongClickListener(markerList) {
             @Override
             public void onLongClickListener(Marker marker) {
                 DialogLongClickMarker(marker);
-
             }
         });
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(10.834631, 105.667668), 14));
