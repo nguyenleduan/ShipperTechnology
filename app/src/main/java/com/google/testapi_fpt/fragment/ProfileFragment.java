@@ -16,6 +16,7 @@ import com.google.testapi_fpt.DataClass;
 import com.google.testapi_fpt.ImageCover;
 import com.google.testapi_fpt.R;
 import com.google.testapi_fpt.login.LoginActivity;
+import com.google.testapi_fpt.route.RouteActivity;
 import com.google.testapi_fpt.teeee;
 import com.squareup.picasso.Picasso;
 
@@ -50,8 +51,7 @@ public class ProfileFragment extends Fragment {
         tvSLLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), teeee.class);
-                startActivity(intent);
+
             }
         });
         imgLogout.setOnClickListener(new View.OnClickListener() {

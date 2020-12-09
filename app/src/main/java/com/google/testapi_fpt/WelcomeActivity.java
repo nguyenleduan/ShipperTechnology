@@ -66,7 +66,6 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_welcome);
         top = AnimationUtils.loadAnimation(this,R.anim.top_animation);
         img = findViewById(R.id.imgLogo);
@@ -151,6 +150,8 @@ public class WelcomeActivity extends AppCompatActivity {
 //            }
 //        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
     }
+
+    // ẩn topp dektop
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -158,6 +159,7 @@ public class WelcomeActivity extends AppCompatActivity {
             hideSystemUI();
         }
     }
+
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -169,7 +171,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                        | View.SYSTEM_UI_FLAG_FULLSCREEN
         );
     }
 

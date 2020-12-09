@@ -570,22 +570,28 @@ public class LocationActivity extends FragmentActivity implements
                     icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).snippet(arrSearchProgram.get(0).Address));
             MoveCameraSearch(new LatLng(arrSearchProgram.get(0).Latitude, arrSearchProgram.get(0).Longitude), 18);
             marker.showInfoWindow();
+            if(s.startsWith("Gọi cho")){
+                CallPhone(marker);
+                Log.e("LOGE",marker.getTitle());
+            }else if(s.startsWith("đến")){
+                final LatLng targetLatLng = new LatLng(
+                        arrSearchProgram.get(0).Latitude,
+                        arrSearchProgram.get(0).Longitude);
+                final Intent intent = new Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("google.navigation:q="
+                                + targetLatLng.latitude
+                                + ","
+                                + targetLatLng.longitude));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                LocationActivity.this.startActivity(intent);
+            }else{
+                Toast.makeText(LocationActivity.this, "Chưa hiểu mấy", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "Không tìm thấy " + sMunber, Toast.LENGTH_SHORT).show();
         }
-        if(s.startsWith("đến")){
-            final LatLng targetLatLng = new LatLng(
-                    arrSearchProgram.get(0).Latitude,
-                    arrSearchProgram.get(0).Longitude);
-            final Intent intent = new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("google.navigation:q="
-                            + targetLatLng.latitude
-                            + ","
-                            + targetLatLng.longitude));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            LocationActivity.this.startActivity(intent);
-        }
+
 
     }
 
@@ -726,7 +732,6 @@ public class LocationActivity extends FragmentActivity implements
             return;
         }
         mMap.getUiSettings().setMapToolbarEnabled(true);
-
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {

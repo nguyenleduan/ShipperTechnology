@@ -32,7 +32,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".teeee"></activity>
+        <activity android:name=".route.RouteActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.full2"></activity>
+        <activity android:name=".teeee" />
         <activity android:name=".location.EditLocationActivity" />
 
         <uses-library
@@ -77,10 +80,9 @@
         <activity
             android:name=".WelcomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.wellcome">
+            android:theme="@style/AppTheme.full2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

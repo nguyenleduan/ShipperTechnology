@@ -23,6 +23,12 @@
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:textAllCaps">false</item>
     </style>
+    <style name="AppTheme.full2">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/stran</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
 
     <style name="AppTheme.wellcome">
         <item name="windowActionBar">false</item>
