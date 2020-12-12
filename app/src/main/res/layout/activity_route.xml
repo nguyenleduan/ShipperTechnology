@@ -2,11 +2,25 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
     tools:context=".route.RouteActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="200dp"
+        android:background="#FFD704"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView3"
@@ -20,7 +34,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/gifImageView4"
@@ -77,7 +91,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="800dp">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/textView13"
@@ -115,10 +129,11 @@
                             android:layout_weight="1"
                             android:ems="10"
                             android:hint="Nhập sô điện thoại"
+                            android:imeOptions="actionDone"
                             android:inputType="phone" />
 
                         <Button
-                            android:id="@+id/button3"
+                            android:id="@+id/btAddLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -132,16 +147,32 @@
 
                     <ListView
                         android:id="@+id/lv"
-                        android:layout_width="50dp"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/Linea111s"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginStart="0dp"
+                        android:layout_marginStart="2dp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginEnd="0dp">
+                        android:layout_marginEnd="0dp" />
 
-                    </ListView>
+                    <Button
+                        android:id="@+id/btStart"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/lv"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="40dp"
+                        android:background="@drawable/buttom_main"
+                        android:fontFamily="@font/baloo"
+                        android:text="Bất đầu"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
+
 
                 </RelativeLayout>
             </LinearLayout>

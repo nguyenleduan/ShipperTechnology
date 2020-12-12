@@ -1,27 +1,39 @@
 package com.google.testapi_fpt.route;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.testapi_fpt.DataClass;
 import com.google.testapi_fpt.MainActivity;
 import com.google.testapi_fpt.R;
@@ -35,11 +47,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RouteActivity extends AppCompatActivity {
-    ListView lv,lvSearch;
+    ListView lv, lvSearch;
     EditText editTextPhone;
     DataClass mdata = new DataClass();
+    DatabaseReference mData;
+    DataClass dataClass = new DataClass();
     static ArrayList<ProgramModel> arrSearchProgram = new ArrayList<>();
     public static ArrayList<RouteModel> arrRoute = new ArrayList<>();
+    Button btAddLocation, btStart;
+    ConstraintLayout mConstraintLayout;
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +64,61 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         findview();
         Event();
+//        Location.distanceBetween(dMyLatitude,dMyLongitude,dLatEnd,dLoEnd,resul);
+//        //
     }
-    private void DialogAddRoute(){
-        Dialog dialog = new Dialog(RouteActivity.this);
-        dialog.setContentView(R.layout.dialog_add_route);
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check that it is the SecondActivity with an OK result
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    String mPhone = data.getStringExtra("keyPhone");
+                    Double mLatitude, mLongitude;
+                    mLatitude = data.getDoubleExtra("KeyLatitude", 0);
+                    mLongitude = data.getDoubleExtra("KeyLongitude", 0);
+                    arrRoute.add(new RouteModel(mPhone, mLatitude, mLongitude));
+                    SetListItem(arrRoute);
+                    editTextPhone.setText(null);
+                }
+            }
+        }
     }
 
     private void Event() {
+        btStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RouteActivity.this, DetailRouteActivity.class);
+                startActivity(intent);
+            }
+        });
+        editTextPhone.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    CloseKeyboard();
+                    lvSearch.setVisibility(View.GONE);
+                    return true;
+                }
+                return false;
+            }
+        });
+        mConstraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lvSearch.setVisibility(View.GONE);
+            }
+        });
+        btAddLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RouteActivity.this, AddLocationRouteActivity.class);
+                intent.putExtra("keyPHONE", editTextPhone.getText().toString());
+                startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
+            }
+        });
         editTextPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -89,7 +153,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // add to list Route
-                arrRoute.add(new RouteModel(arrSearchProgram.get(position).NumberPhone,arrSearchProgram.get(position).Latitude,arrSearchProgram.get(position).Longitude));
+                arrRoute.add(new RouteModel(arrSearchProgram.get(position).NumberPhone, arrSearchProgram.get(position).Latitude, arrSearchProgram.get(position).Longitude));
                 SetListItem(arrRoute);
                 // close key board
                 CloseKeyboard();
@@ -102,11 +166,28 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     public void SetListItem(ArrayList<RouteModel> arrRoute) {
-
-        ListViewitem adapter = new ListViewitem(RouteActivity.this,R.layout.item_route,arrRoute);
+        ListViewitem adapter = new ListViewitem(RouteActivity.this, R.layout.item_route, arrRoute);
         lv.setAdapter(adapter);
-
+        if (arrRoute.size() > 1) {
+            btStart.setVisibility(View.VISIBLE);
+        } else {
+            btStart.setVisibility(View.GONE);
+        }
+        ListAdapter listadp = lv.getAdapter();
+        if (listadp != null) {
+            int totalHeight = 0;
+            for (int i = 0; i < listadp.getCount(); i++) {
+                View listItem = listadp.getView(i, null, lv);
+                listItem.measure(0, 0);
+                totalHeight += listItem.getMeasuredHeight();
+            }
+            ViewGroup.LayoutParams params = lv.getLayoutParams();
+            params.height = totalHeight + (lv.getDividerHeight() * (listadp.getCount() - 1));
+            lv.setLayoutParams(params);
+            lv.requestLayout();
+        }
     }
+
     private void CloseKeyboard() {
         View view = RouteActivity.this.getCurrentFocus();
         if (view != null) {
@@ -114,12 +195,15 @@ public class RouteActivity extends AppCompatActivity {
             in.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
     private void findview() {
-        editTextPhone= findViewById(R.id.editTextPhone);
-        lvSearch= findViewById(R.id.lvSearch);
+        btStart = findViewById(R.id.btStart);
+        mConstraintLayout = findViewById(R.id.mConstraintLayout);
+        btAddLocation = findViewById(R.id.btAddLocation);
+        editTextPhone = findViewById(R.id.editTextPhone);
+        lvSearch = findViewById(R.id.lvSearch);
         lv = findViewById(R.id.lv);
     }
-
 
     // ẩn topp dektop
     @Override
@@ -129,7 +213,6 @@ public class RouteActivity extends AppCompatActivity {
             hideSystemUI();
         }
     }
-
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(

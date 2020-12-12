@@ -140,7 +140,6 @@ public class LocationActivity extends FragmentActivity implements
             Toast.makeText(this, "Chưa có dữ liệu !", Toast.LENGTH_SHORT).show();
             finish();
         }
-
 //        for(int i = 0 ; i<=5;i++){
 //            AddLocation("","54654",10.834957,"check",120.26262,"Test",
 //                    "Note","096"+i+2+"441"+i+"0"+i+3);
@@ -157,15 +156,22 @@ public class LocationActivity extends FragmentActivity implements
         Geocoder geocoder = new Geocoder(LocationActivity.this);
         try {
             addressList = geocoder.getFromLocationName(location, 1);
+            if (addressList.size() != 0) {
+                Address ad = addressList.get(0);
+                dLat = ad.getLatitude();
+                dLong = ad.getLongitude();
+                LatLng latLne = new LatLng(dLat, dLong);
+                mMarkerSearch = mMap.addMarker(new MarkerOptions().position(latLne).title(location).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_search)));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLne, 15));
+            } else {
+                Toast.makeText(this, "Tìm kiếm lỗi !", Toast.LENGTH_SHORT).show();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, "tìm kiếm lỗi !!", Toast.LENGTH_SHORT).show();
         }
-        Address ad = addressList.get(0);
-        dLat = ad.getLatitude();
-        dLong = ad.getLongitude();
-        LatLng latLne = new LatLng(dLat, dLong);
-        mMarkerSearch = mMap.addMarker(new MarkerOptions().position(latLne).title(location).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_search)));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLne, 15));
+
     }
 
     private void CloseKeyboard() {
@@ -394,7 +400,12 @@ public class LocationActivity extends FragmentActivity implements
         edtNoteAddLocation = dialog.findViewById(R.id.edtNoteAddLocation);
         btCancelAddLocation = dialog.findViewById(R.id.btCancelAddLocation);
         btAddAddLocation = dialog.findViewById(R.id.btAddAddLocation);
-        final String note = "null";
+        final String[] address = new String[1];
+        final String[] nameLocation = new String[1];
+        final String[] noteLocation = new String[1];
+        address[0] = "Chưa có dữ liệu";
+        nameLocation[0] = "Chưa có dữ liệu";
+        noteLocation[0] = "Chưa có dữ liệu";
         btAddAddLocation.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -405,38 +416,21 @@ public class LocationActivity extends FragmentActivity implements
                 }
                 if (edtNumberPhoneAddLocation.getText().toString().equals("")) {
                     Toast.makeText(LocationActivity.this, "Chưa nhập số điện thoại", Toast.LENGTH_SHORT).show();
-                } else if (edtAddressAddLocation.getText().toString().equals("")) {
-                    Toast.makeText(LocationActivity.this, "Chưa nhập địa chỉ", Toast.LENGTH_SHORT).show();
-                } else if (edtNameLocationAddLocation.getText().toString().equals("")) {
-                    Toast.makeText(LocationActivity.this, "Chưa nhập tên địa điểm", Toast.LENGTH_SHORT).show();
-                } else if (edtNoteAddLocation.getText().toString().equals("")) {
-                    // add program
-                    AddLocation(edtAddressAddLocation.getText().toString(), activity.mProfile.IDUSER, mLatngLongClick.latitude, "LINK",
-                            mLatngLongClick.longitude, edtNameLocationAddLocation.getText().toString(), note,
-                            edtNumberPhoneAddLocation.getText().toString());
-                    dialog.cancel();
-                    progressDialog = ProgressDialog.show(LocationActivity.this, "Xin chờ xíu", "Đang load dữ liệu...", true, false);
-                    DataMaps dataMaps = new DataMaps();
-                    dataMaps.start();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (activity.arrProgram.size() > 0) {
-                                LoadMarker();
-                            } else {
-                                Toast.makeText(LocationActivity.this, "Lỗi", Toast.LENGTH_SHORT).show();
-                            }
-                            progressDialog.dismiss();
-                            mMarkerLongclick.remove();
-                        }
-                    }, 2000);
                 } else {
-                    // add programm
-                    AddLocation(edtAddressAddLocation.getText().toString(), "002", mLatngLongClick.latitude, "LINK",
-                            mLatngLongClick.longitude, edtNameLocationAddLocation.getText().toString(), edtNoteAddLocation.getText().toString(),
+                    if (!edtAddressAddLocation.getText().toString().equals("")) {
+                        address[0] = edtAddressAddLocation.getText().toString();
+                    }
+                    if (!edtNameLocationAddLocation.getText().toString().equals("")) {
+                        nameLocation[0] = edtNameLocationAddLocation.getText().toString();
+                    }
+                    if (!edtNoteAddLocation.getText().toString().equals("")) {
+                        noteLocation[0] = edtNoteAddLocation.getText().toString();
+                    }
+                    AddLocation(address[0], activity.mProfile.IDUSER, mLatngLongClick.latitude, "LINK",
+                            mLatngLongClick.longitude, nameLocation[0], noteLocation[0],
                             edtNumberPhoneAddLocation.getText().toString());
                     dialog.cancel();
-                    progressDialog = ProgressDialog.show(LocationActivity.this, "Xin chờ xíu", "Đang load dữ liệu...", true, false);
+                    progressDialog = ProgressDialog.show(LocationActivity.this, "Xin chờ...", "Đang load dữ liệu...", true, false);
                     final DataMaps dataMaps = new DataMaps();
                     dataMaps.start();
                     final Timer time = new Timer();
@@ -466,6 +460,8 @@ public class LocationActivity extends FragmentActivity implements
                         }
                     }, 1000, 1000);
                 }
+
+
                 return true;
             }
         });
@@ -570,10 +566,10 @@ public class LocationActivity extends FragmentActivity implements
                     icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).snippet(arrSearchProgram.get(0).Address));
             MoveCameraSearch(new LatLng(arrSearchProgram.get(0).Latitude, arrSearchProgram.get(0).Longitude), 18);
             marker.showInfoWindow();
-            if(s.startsWith("Gọi cho")){
+            if (s.startsWith("Gọi cho")) {
                 CallPhone(marker);
-                Log.e("LOGE",marker.getTitle());
-            }else if(s.startsWith("đến")){
+                Log.e("LOGE", marker.getTitle());
+            } else if (s.startsWith("đến")) {
                 final LatLng targetLatLng = new LatLng(
                         arrSearchProgram.get(0).Latitude,
                         arrSearchProgram.get(0).Longitude);
@@ -585,7 +581,7 @@ public class LocationActivity extends FragmentActivity implements
                                 + targetLatLng.longitude));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 LocationActivity.this.startActivity(intent);
-            }else{
+            } else {
                 Toast.makeText(LocationActivity.this, "Chưa hiểu mấy", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -732,6 +728,8 @@ public class LocationActivity extends FragmentActivity implements
             return;
         }
         mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(10.834631, 105.667668), 14));
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {

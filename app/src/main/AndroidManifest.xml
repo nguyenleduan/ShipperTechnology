@@ -32,9 +32,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".route.RouteActivity"
+        <activity android:name=".route.DetailRouteActivity"></activity>
+        <activity
+            android:name=".route.AddLocationRouteActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.full2"></activity>
+            android:theme="@style/AppTheme.full2" />
+        <activity
+            android:name=".route.RouteActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.full2" />
         <activity android:name=".teeee" />
         <activity android:name=".location.EditLocationActivity" />
 
@@ -83,6 +89,7 @@
             android:theme="@style/AppTheme.full2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

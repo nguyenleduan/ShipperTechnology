@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
         android:fontFamily="@font/bangers"
-        android:text="nhân tk"
+        android:text="S h i p p e r"
         android:textAlignment="center"
         android:textColor="#531818"
         android:textSize="80sp"

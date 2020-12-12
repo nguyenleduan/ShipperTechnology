@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,11 +37,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         spaceNavigationView = findViewById(R.id.space);
-        ProgramModel programModel = new ProgramModel("null", dataClass.mProfile.IDUSER, 102.656565, "null",
-                102.3333, "null", "null", "G0001");
-        mData = FirebaseDatabase.getInstance().getReference();
-        mData.child("ProgramGroup").child(dataClass.mProfile.IDUSER).child("G0001").setValue(programModel);
-        mData.child("Program").child(dataClass.mProfile.IDUSER).child("G0001").setValue(programModel);
+        try {
+            ProgramModel programModel = new ProgramModel("null", dataClass.mProfile.IDUSER, 102.656565, "null",
+                    102.3333, "null", "null", "G0001");
+            mData = FirebaseDatabase.getInstance().getReference();
+            mData.child("ProgramGroup").child(dataClass.mProfile.IDUSER).child("G0001").setValue(programModel);
+            mData.child("Program").child(dataClass.mProfile.IDUSER).child("G0001").setValue(programModel);
+        }catch (Exception e){
+            Log.e("ERRO",e.toString());
+        }
+
         spaceNavigationView.setCentreButtonSelectable(true);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new HomeFragment()).commit();
         spaceNavigationView.initWithSaveInstanceState(savedInstanceState);
